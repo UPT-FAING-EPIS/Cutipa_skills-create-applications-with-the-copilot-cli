@@ -16,66 +16,69 @@ function printUsage() {
   console.error('Operations: add | +, subtract | -, multiply | x | *, divide | / | ÷');
 }
 
-const [, , opRaw, aRaw, bRaw] = process.argv;
-
-if (!opRaw || !aRaw || !bRaw) {
-  printUsage();
-  process.exit(1);
-}
-
-const op = opRaw.toLowerCase();
-const a = Number(aRaw);
-const b = Number(bRaw);
-
-if (!Number.isFinite(a) || !Number.isFinite(b)) {
-  console.error('Error: operands must be valid numbers');
-  process.exit(1);
-}
-
+// Exportable functions for unit testing
 function add(x, y) { return x + y; }
 function subtract(x, y) { return x - y; }
 function multiply(x, y) { return x * y; }
-function divide(x, y) { return x / y; }
+function divide(x, y) { if (y === 0) throw new Error('Division by zero'); return x / y; }
 
-let result;
-let opName = '';
+// CLI entrypoint: only run when invoked directly
+if (require.main === module) {
+  const [, , opRaw, aRaw, bRaw] = process.argv;
 
-switch (op) {
-  case 'add':
-  case '+':
-    result = add(a, b);
-    opName = 'addition';
-    break;
-  case 'subtract':
-  case 'sub':
-  case '-':
-    result = subtract(a, b);
-    opName = 'subtraction';
-    break;
-  case 'multiply':
-  case 'mul':
-  case 'x':
-  case '*':
-    result = multiply(a, b);
-    opName = 'multiplication';
-    break;
-  case 'divide':
-  case 'div':
-  case '/':
-  case '÷':
-    if (b === 0) {
-      console.error('Error: Division by zero');
-      process.exit(2);
-    }
-    result = divide(a, b);
-    opName = 'division';
-    break;
-  default:
-    console.error(`Error: unknown operation '${opRaw}'`);
+  if (!opRaw || !aRaw || !bRaw) {
     printUsage();
     process.exit(1);
+  }
+
+  const op = opRaw.toLowerCase();
+  const a = Number(aRaw);
+  const b = Number(bRaw);
+
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    console.error('Error: operands must be valid numbers');
+    process.exit(1);
+  }
+
+  let result;
+
+  switch (op) {
+    case 'add':
+    case '+':
+      result = add(a, b);
+      break;
+    case 'subtract':
+    case 'sub':
+    case '-':
+      result = subtract(a, b);
+      break;
+    case 'multiply':
+    case 'mul':
+    case 'x':
+    case '*':
+      result = multiply(a, b);
+      break;
+    case 'divide':
+    case 'div':
+    case '/':
+    case '÷':
+      if (b === 0) {
+        console.error('Error: Division by zero');
+        process.exit(2);
+      }
+      result = divide(a, b);
+      break;
+    default:
+      console.error(`Error: unknown operation '${opRaw}'`);
+      printUsage();
+      process.exit(1);
+  }
+
+  // Print the numeric result to stdout
+  console.log(result);
+  process.exit(0);
 }
 
-// Print the numeric result to stdout
-console.log(result);
-process.exit(0);
+// Export functions for tests
+module.exports = { add, subtract, multiply, divide, printUsage };
+
