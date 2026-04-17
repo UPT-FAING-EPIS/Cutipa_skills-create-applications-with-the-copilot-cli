@@ -1,4 +1,4 @@
-const { add, subtract, multiply, divide, modulo, pow, sqrt } = require('../calculator');
+const { add, subtract, multiply, divide, modulo, pow, sqrt, power, squareRoot } = require('../calculator');
 
 describe('Calculator basic operations', () => {
   test('2 + 3 = 5 (addition)', () => {
@@ -26,7 +26,7 @@ describe('Calculator basic operations', () => {
     expect(multiply(2.5, 2)).toBeCloseTo(5);
   });
 
-  // New operations
+  // Existing/compatibility tests
   test('Modulo: 10 % 3 = 1', () => {
     expect(modulo(10, 3)).toBe(1);
   });
@@ -35,15 +35,32 @@ describe('Calculator basic operations', () => {
     expect(() => modulo(1, 0)).toThrow(/modulo by zero/i);
   });
 
-  test('Exponentiation: 2 ^ 3 = 8', () => {
+  test('Exponentiation (legacy): pow(2, 3) = 8', () => {
     expect(pow(2, 3)).toBe(8);
   });
 
-  test('Square root: sqrt(9) = 3', () => {
+  test('Square root (legacy): sqrt(9) = 3', () => {
     expect(sqrt(9)).toBe(3);
   });
 
-  test('Square root of negative throws', () => {
+  test('Square root of negative throws (legacy)', () => {
     expect(() => sqrt(-1)).toThrow(/square root of negative/i);
+  });
+
+  // New tests for API requested in feature request
+  test('Modulo: 5 % 2 = 1', () => {
+    expect(modulo(5, 2)).toBe(1);
+  });
+
+  test('Power function: power(2, 3) = 8', () => {
+    expect(power(2, 3)).toBe(8);
+  });
+
+  test('SquareRoot function: squareRoot(16) = 4', () => {
+    expect(squareRoot(16)).toBe(4);
+  });
+
+  test('SquareRoot of negative throws', () => {
+    expect(() => squareRoot(-4)).toThrow(/square root of negative/i);
   });
 });
